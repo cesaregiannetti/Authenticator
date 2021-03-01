@@ -514,5 +514,8 @@
     },
     "permission_scripting": {
         "message": "Inject scripts into he current tab to scan QR codes and allow auto-fill to work."
+    },
+    "password": {
+        "message": "password"
     }
 }

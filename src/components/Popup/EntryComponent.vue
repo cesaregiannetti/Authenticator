@@ -69,6 +69,15 @@
         v-on:change="entry.update(encryption)"
       />
     </div>
+    <div class="issuer">{{ hideText(entry.password) }}</div>
+    <div class="issuerEdit">
+      <input
+        v-bind:placeholder="i18n.password"
+        type="text"
+        v-model="entry.password"
+        v-on:change="entry.update(encryption)"
+      />
+    </div>
     <div
       class="showqr"
       v-if="shouldShowQrIcon(entry)"
@@ -160,6 +169,9 @@ export default Vue.extend({
 
       return new Array(entry.digits).fill("&bull;").join("");
     },
+    hideText(text: string) {
+      return new Array(text.length).fill("*").join("");
+    },
     async removeEntry(entry: OTPEntry) {
       if (
         await this.$store.dispatch(
@@ -232,7 +244,7 @@ export default Vue.extend({
             }
 
             const lastActiveElement = document.activeElement as HTMLElement;
-            codeClipboard.value = entry.code;
+            codeClipboard.value = entry.password + entry.code;
             codeClipboard.focus();
             codeClipboard.select();
             document.execCommand("Copy");
