@@ -232,7 +232,10 @@ export default Vue.extend({
               return;
             }
 
-            if (this.$store.state.menu.useAutofill) {
+            // Cesare: autofill when the host matches
+            // otherwise copy to clipboard, but not both
+            const m = this.$store.getters["accounts/matchedEntries"];
+            if (m.includes(entry.hash) && this.$store.state.menu.useAutofill) {
               await insertContentScript();
               const tab = await getCurrentTab();
               if (tab && tab.id) {
@@ -241,18 +244,18 @@ export default Vue.extend({
                   code: entry.code,
                 });
               }
+            } else {
+              const lastActiveElement = document.activeElement as HTMLElement;
+              codeClipboard.value = entry.password + entry.code;
+              codeClipboard.focus();
+              codeClipboard.select();
+              document.execCommand("Copy");
+              lastActiveElement.focus();
+              this.$store.dispatch(
+                "notification/ephermalMessage",
+                this.i18n.copied
+              );
             }
-
-            const lastActiveElement = document.activeElement as HTMLElement;
-            codeClipboard.value = entry.password + entry.code;
-            codeClipboard.focus();
-            codeClipboard.select();
-            document.execCommand("Copy");
-            lastActiveElement.focus();
-            this.$store.dispatch(
-              "notification/ephermalMessage",
-              this.i18n.copied
-            );
           }
         }
       );
